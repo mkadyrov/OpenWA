@@ -10,7 +10,6 @@ services:
     restart: unless-stopped
     ports:
       - '127.0.0.1:${DASHBOARD_PORT:-2886}:80'
-      - '127.0.0.1:8080:8080' # Traefik dashboard
     volumes:
       - ./traefik/traefik.yml:/etc/traefik/traefik.yml:ro
       - ./traefik/dynamic.yml:/etc/traefik/dynamic.yml:ro
