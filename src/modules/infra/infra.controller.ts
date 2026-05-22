@@ -14,15 +14,16 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 interface InfraStatus {
-  database: { connected: boolean; type: string; host: string };
-  redis: { enabled: boolean; connected: boolean; host: string; port: number };
+  database: { connected: boolean; type: string; host: string; builtIn: boolean };
+  redis: { enabled: boolean; connected: boolean; host: string; port: number; builtIn: boolean };
   queue: {
     enabled: boolean;
     messages: { pending: number; completed: number; failed: number };
     webhooks: { pending: number; completed: number; failed: number };
   };
-  storage: { type: 'local' | 's3'; path?: string; bucket?: string };
+  storage: { type: 'local' | 's3'; path?: string; bucket?: string; builtIn: boolean };
   engine: { type: string; headless: boolean; sessionDataPath: string; browserArgs: string };
+  server: { nodeEnv: string; port: number; dashboardPort: number; domain: string; corsOrigins: string };
 }
 
 interface SaveConfigDto {
@@ -177,15 +178,37 @@ export class InfraController {
     const browserArgs = this.configService.get<string>('engine.browserArgs', '--no-sandbox --disable-gpu');
 
     return {
-      database: { connected: dbConnected, type: dbType, host: dbHost },
-      redis: { enabled: redisEnabled, connected: redisConnected, host: redisHost, port: redisPort },
+      database: {
+        connected: dbConnected,
+        type: dbType,
+        host: dbHost,
+        builtIn: process.env.POSTGRES_BUILTIN === 'true',
+      },
+      redis: {
+        enabled: redisEnabled,
+        connected: redisConnected,
+        host: redisHost,
+        port: redisPort,
+        builtIn: process.env.REDIS_BUILTIN === 'true',
+      },
       queue: {
         enabled: queueEnabled,
         messages: { pending: 0, completed: 0, failed: 0 },
         webhooks: { pending: 0, completed: 0, failed: 0 },
       },
-      storage: { type: storageType, path: storagePath },
+      storage: {
+        type: storageType,
+        path: storagePath,
+        builtIn: process.env.MINIO_BUILTIN === 'true',
+      },
       engine: { type: engineType, headless: engineHeadless, sessionDataPath, browserArgs },
+      server: {
+        nodeEnv: process.env.NODE_ENV || 'development',
+        port: parseInt(process.env.PORT || '2785', 10),
+        dashboardPort: parseInt(process.env.DASHBOARD_PORT || '2886', 10),
+        domain: process.env.DOMAIN || 'localhost',
+        corsOrigins: process.env.CORS_ORIGINS || '*',
+      },
     };
   }
 

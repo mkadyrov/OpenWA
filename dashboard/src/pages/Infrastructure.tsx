@@ -182,6 +182,34 @@ export function Infrastructure() {
       messages: infraStatus.queue.messages,
       webhooks: infraStatus.queue.webhooks,
     });
+
+    setRedisEnabled(infraStatus.redis.enabled);
+
+    setDbConfig(prev => ({
+      ...prev,
+      builtIn: infraStatus.database.builtIn,
+    }));
+
+    setRedisConfig(prev => ({
+      ...prev,
+      builtIn: infraStatus.redis.builtIn,
+    }));
+
+    setStorageConfig(prev => ({
+      ...prev,
+      builtIn: infraStatus.storage.builtIn,
+    }));
+
+    if (infraStatus.server) {
+      setServerConfig(prev => ({
+        ...prev,
+        nodeEnv: infraStatus.server.nodeEnv || prev.nodeEnv,
+        port: String(infraStatus.server.port || prev.port),
+        dashboardPort: String(infraStatus.server.dashboardPort || prev.dashboardPort),
+        domain: infraStatus.server.domain || prev.domain,
+        corsOrigins: infraStatus.server.corsOrigins || prev.corsOrigins,
+      }));
+    }
   }, [infraStatus]);
 
   if (loading) {

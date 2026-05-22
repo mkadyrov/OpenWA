@@ -85,15 +85,16 @@ export interface HealthStatus {
 }
 
 export interface InfraStatus {
-  database: { connected: boolean; type: string; host: string };
-  redis: { connected: boolean; host: string; port: number };
+  database: { connected: boolean; type: string; host: string; builtIn: boolean };
+  redis: { enabled: boolean; connected: boolean; host: string; port: number; builtIn: boolean };
   queue: {
     enabled: boolean;
     messages: { pending: number; completed: number; failed: number };
     webhooks: { pending: number; completed: number; failed: number };
   };
-  storage: { type: 'local' | 's3'; path?: string; bucket?: string };
+  storage: { type: 'local' | 's3'; path?: string; bucket?: string; builtIn: boolean };
   engine: { type: string; headless: boolean };
+  server: { nodeEnv: string; port: number; dashboardPort: number; domain: string; corsOrigins: string };
 }
 
 export interface SaveConfigPayload {
