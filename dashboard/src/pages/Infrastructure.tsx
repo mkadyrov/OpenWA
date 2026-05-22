@@ -203,7 +203,7 @@ export function Infrastructure() {
     if (infraStatus.server) {
       setServerConfig(prev => ({
         ...prev,
-        nodeEnv: infraStatus.server.nodeEnv || prev.nodeEnv,
+        nodeEnv: (infraStatus.server.nodeEnv as 'production' | 'development') || prev.nodeEnv,
         port: String(infraStatus.server.port || prev.port),
         dashboardPort: String(infraStatus.server.dashboardPort || prev.dashboardPort),
         domain: infraStatus.server.domain || prev.domain,
