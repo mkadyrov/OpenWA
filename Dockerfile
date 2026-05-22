@@ -29,7 +29,7 @@ RUN node ./node_modules/.bin/nest build
 FROM node:22-slim AS production
 
 # Install Chrome/Chromium and required dependencies
-RUN apt-get update && apt-get install -y \
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y --no-install-recommends \
     chromium \
     fonts-liberation \
     libappindicator3-1 \
